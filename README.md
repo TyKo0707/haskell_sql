@@ -1,43 +1,42 @@
-# NPP Project: SQL Reader
+# NPP Project: Reader for SQL
 
-This Haskell project is a command-line tool for running simple SQL-like queries on CSV files.
+A tool SQL Reader is implemented for the NPP Project and works as a simple command-line tool for running SQL queries on CSV files.
 
-## 🧠 Overview
+## Overview
 
-This tool is designed to:
-- Inspect CSV files and infer column types.
-- Accept simple SQL-like queries.
-- Execute validated queries on the data.
-- Export the results to a new file.
+Key features: 
+- The tool accepts simple SQL queries and verifies them before running them on the data; 
+- It lets users view CSV files for column type detection.  
+- Users can export their results to the designated output destination using this tool.
 
-It uses:
-- [`cassava`](https://hackage.haskell.org/package/cassava) for efficient CSV parsing.
-- [`megaparsec`](https://hackage.haskell.org/package/megaparsec) for parsing SQL-like queries.
+ Libraries used: 
+ - CSV parsing operations are made possible by the `cassava` library.  
+ - The SQL query parser is the `megaparsec` library.
 
 ## Pipeline
 
-1. **Argument Parsing**  
-   Detects if user provided just CSV path (interactive mode) or full auto mode with CSV + query + output.
+1. **Parse Arguments**  
+The application checks whether users have chosen pipeline-auto mode: CSV path, query and output path, or if they have only entered the CSV path to run in interactive terminal mode (where query and output path will be asked later).
 
-2. **CSV Loading**  
-   Reads and validates CSV using `cassava`.
+2. **Load CSV**  
+The program reads and verifies the validity of CSV files using `cassava`.
 
-3. **Data Preview**  
-   Prints column names, 2–3 sample rows, and infers column types.
+3. **Preview of the Dataset**  
+The application automatically determines the data types of each column while displaying the names of the columns and two to three rows from the start and finish of the data set.
 
-4. **Query Handling**  
-   Parses SQL-like query with `megaparsec`.  
-   Validates column names and type compatibility.
+4. **Query Input and Validation**  
+When a query is supplied or the query path is requested, the application uses `megaparsec` to parse SQL queries.  
+The system verifies that the number of column values, other elements, and type and column names are compatible.
 
 5. **Execution**  
-   Applies the query to data, prints sample output.
+Before showing a preview of the output results, the system runs the query on the dataset.
 
-6. **Export**  
-   Saves result to user-specified path.
+6. **Results**  
+If a path is specified, the application saves the result to that path, otherwise, it requests one.
 
 ## Example Usage
 
 Interactive mode:
 ```bash
-$ ./npp-sql-reader ./data/employees.csv
+$./npp-sql-reader./data/employees.csv
 ```
