@@ -36,8 +36,14 @@ If a path is specified, the application saves the result to that path, otherwise
 
 ## Example Usage
 
-Interactive mode:
+Interactive mode (from root directory):
 ```bash
 % ghc -i./src Main.hs -o sqlreader
 % ./sqlreader ./data/imdb.csv
+```
+
+To run tests, write in terminal (from root directory):
+```bash
+% ghc -i./test -i./src test/run_tests.hs -outputdir build -o run-tests
+% ./run-tests
 ```

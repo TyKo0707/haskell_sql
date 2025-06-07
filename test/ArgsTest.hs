@@ -15,7 +15,7 @@ parseArgs _         = InvalidArgs
 
 runArgTests :: IO ()
 runArgTests = do
-    putStrLn "Running ArgsTest..."
+    putStrLn "\nRunning ArgsTest..."
     assertEqual "AutoMode with 3 args"
         (AutoMode "file.csv" "SELECT *" "out.csv")
         (parseArgs ["file.csv", "SELECT *", "out.csv"])
