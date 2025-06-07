@@ -22,7 +22,7 @@ The application checks whether users have chosen pipeline-auto mode: CSV path, q
 The program reads and verifies the validity of CSV files using `cassava`.
 
 3. **Preview of the Dataset**  
-The application automatically determines the data types of each column while displaying the names of the columns and two to three rows from the start and finish of the data set.
+The application automatically determines the data types of each column while displaying the names of the columns of the data set.
 
 4. **Query Input and Validation**  
 When a query is supplied or the query path is requested, the application uses `megaparsec` to parse SQL queries.  
@@ -38,5 +38,6 @@ If a path is specified, the application saves the result to that path, otherwise
 
 Interactive mode:
 ```bash
-$./npp-sql-reader./data/employees.csv
+% ghc -i./src Main.hs -o sqlreader
+% ./sqlreader ./data/imdb.csv
 ```
