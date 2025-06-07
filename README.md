@@ -43,7 +43,7 @@ To install dependencies, use:
 
 Interactive mode (from root directory):
 ```bash
-% ghc -i./src Main.hs -o sqlreader
+% ghc -i./src Main.hs -outputdir build -o sqlreader
 % ./sqlreader ./data/imdb.csv
 ```
 
