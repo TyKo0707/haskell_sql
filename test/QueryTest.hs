@@ -8,7 +8,7 @@ runQueryTests :: IO ()
 runQueryTests = do
     putStrLn "\nRunning QueryParser and QueryValidator tests..."
 
-    -- Parser tests
+    -- Parser
     assertEqual "Parse: SELECT a FROM t"
         (Right $ SQLQuery ["a"] "t" Nothing Nothing Nothing)
         (parseSQLQuery "SELECT a FROM t")
@@ -17,7 +17,7 @@ runQueryTests = do
         (Right $ SQLQuery ["x", "y"] "d" (Just "x > 1") Nothing Nothing)
         (parseSQLQuery "SELECT x, y FROM d WHERE x > 1")
 
-    -- Validation tests
+    -- Validator
     let cols = ["x", "y", "z"]
     assertEqual "Validate known columns"
         (Right ())

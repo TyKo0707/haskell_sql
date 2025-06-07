@@ -3,6 +3,7 @@ module Main where
 import ArgsTest (runArgTests)
 import CSVTest (runCSVTests)
 import QueryTest (runQueryTests)
+import QuerySystemTest (runQuerySystemTests)
 
 main :: IO ()
 main = do
@@ -10,3 +11,4 @@ main = do
     runArgTests
     runCSVTests
     runQueryTests
+    runQuerySystemTests

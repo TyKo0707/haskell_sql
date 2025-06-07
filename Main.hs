@@ -1,10 +1,18 @@
 import System.Environment (getArgs)
 import System.IO (hFlush, stdout)
 
-import CSVReader (loadAndDescribeCSV)
-
-import QueryParser (parseSQLQuery)
+import CSVReader (loadAndDescribeCSV, inferColumnTypes)
+import QueryParser (parseSQLQuery, SQLQuery(..))
 import QueryValidator (loadAndValidateQuery)
+import QueryExecutor (runQuery)
+import OutputWriter (writeCSV)
+
+import qualified Data.Vector as V
+import qualified Data.ByteString.Char8 as B
+import qualified Data.Csv as Csv
+
+type Header = V.Vector B.ByteString
+type Rows = V.Vector Csv.NamedRecord
 
 main :: IO ()
 main = do
@@ -18,9 +26,17 @@ main = do
             putStrLn $ "Output will be saved at: " ++ outputPath
 
             result <- loadAndDescribeCSV csvPath
-            loadAndValidateQuery result query
-
-            return ()
+            case result of
+                Nothing -> putStrLn "Failed to load CSV file."
+                Just (header, rows) -> case parseSQLQuery query of
+                    Left err -> putStrLn $ "Query parsing failed:\n" ++ err
+                    Right parsed -> do
+                        loadAndValidateQuery result query
+                        let colTypes = inferColumnTypes header rows
+                        let resultRows = runQuery parsed rows colTypes
+                        -- mapM_ print resultRows
+                        let selectedHeader = V.fromList $ map B.pack (selectCols parsed)
+                        writeCSV outputPath selectedHeader resultRows
 
         -- Interactive mode
         (csvPath : _) -> do
@@ -33,14 +49,21 @@ main = do
             hFlush stdout
             query <- getLine
 
-            loadAndValidateQuery result query
-
             putStr "Enter output file path: "
             hFlush stdout
             outputPath <- getLine
 
-            putStrLn $ "\nQuery: " ++ query
-            putStrLn $ "Output will be saved at: " ++ outputPath
+            case result of
+                Nothing -> putStrLn "Failed to load CSV file."
+                Just (header, rows) -> case parseSQLQuery query of
+                    Left err -> putStrLn $ "Query parsing failed:\n" ++ err
+                    Right parsed -> do
+                        loadAndValidateQuery result query
+                        let colTypes = inferColumnTypes header rows
+                        let resultRows = runQuery parsed rows colTypes
+                        -- mapM_ print resultRows
+                        let selectedHeader = V.fromList $ map B.pack (selectCols parsed)
+                        writeCSV outputPath selectedHeader resultRows
 
-        -- Default message
+        -- Default usage
         _ -> putStrLn "Usage:\n  Auto mode: ./sqlreader <csv> <query> <output>\n  Interactive mode: ./sqlreader <csv>"

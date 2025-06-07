@@ -12,11 +12,11 @@ import SQLKeywords
 type Parser = Parsec Void String
 
 data SQLQuery = SQLQuery
-  { selectCols  :: [String]
-  , fromSource  :: String
+  { selectCols :: [String]
+  , fromSource :: String
   , whereClause :: Maybe String
   , orderBy     :: Maybe String
-  , limit       :: Maybe Int
+  , limitCount  :: Maybe Int
   } deriving (Show, Eq)
 
 -- Whitespace + comment skipper
