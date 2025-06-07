@@ -3,6 +3,9 @@ import System.IO (hFlush, stdout)
 
 import CSVReader (loadAndDescribeCSV)
 
+import QueryParser (parseSQLQuery)
+import QueryValidator (loadAndValidateQuery)
+
 main :: IO ()
 main = do
     args <- getArgs
@@ -14,7 +17,9 @@ main = do
             putStrLn $ "Query: " ++ query
             putStrLn $ "Output will be saved at: " ++ outputPath
 
-            _ <- loadAndDescribeCSV csvPath
+            result <- loadAndDescribeCSV csvPath
+            loadAndValidateQuery result query
+
             return ()
 
         -- Interactive mode
@@ -22,17 +27,19 @@ main = do
             putStrLn "You are working in interactive mode"
             putStrLn $ "CSV file path: " ++ csvPath
 
-            _ <- loadAndDescribeCSV csvPath
+            result <- loadAndDescribeCSV csvPath
 
             putStr "\nEnter your SQL query: "
             hFlush stdout
             query <- getLine
 
+            loadAndValidateQuery result query
+
             putStr "Enter output file path: "
             hFlush stdout
             outputPath <- getLine
 
-            putStrLn $ "Query: " ++ query
+            putStrLn $ "\nQuery: " ++ query
             putStrLn $ "Output will be saved at: " ++ outputPath
 
         -- Default message

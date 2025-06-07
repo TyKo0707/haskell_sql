@@ -36,6 +36,11 @@ If a path is specified, the application saves the result to that path, otherwise
 
 ## Example Usage
 
+To install dependencies, use:
+```bash
+% cabal install --lib ... --package-env .
+```
+
 Interactive mode (from root directory):
 ```bash
 % ghc -i./src Main.hs -o sqlreader
@@ -44,6 +49,6 @@ Interactive mode (from root directory):
 
 To run tests, write in terminal (from root directory):
 ```bash
-% ghc -i./test -i./src test/run_tests.hs -outputdir build -o run-tests
+% ghc -i./test -i./src test/run_tests.hs -outputdir build_tests -o run-tests
 % ./run-tests
 ```
