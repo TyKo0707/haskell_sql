@@ -29,6 +29,7 @@ processCSVQuery dataset query outputPath =
                 let resultRows = runQuery parsed rows colTypes -- (4)
                 let filterHeader = V.fromList $ map B.pack (selectCols parsed)
                 writeCSV outputPath filterHeader resultRows -- (5)
+                putStrLn ("Data was successfully saved to " ++ outputPath)
 
 -- General steps here are: (1) process args and determine mode -> (2) load data from csv -> 
 -- (3) parse and validate query -> (4) execute query -> (5) write resulted output to the file
@@ -39,9 +40,9 @@ main = do
         -- Auto pipeline mode: all arguments are provided from the beginning
         (csvPath : query : outputPath : _) -> do
             putStrLn "You are working in auto mode"
-            putStrLn $ "CSV file path: " ++ csvPath
+            putStrLn $ "\nCSV file path: " ++ csvPath
             putStrLn $ "Query: " ++ query
-            putStrLn $ "Output will be saved at: " ++ outputPath
+            putStrLn $ "Output will be saved at: " ++ outputPath ++ "\n"
 
             dataset <- loadAndDescribeCSV csvPath -- (2)
             processCSVQuery dataset query outputPath -- (3):(5)

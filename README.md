@@ -36,15 +36,29 @@ If a path is specified, the application saves the result to that path, otherwise
 
 ## Example Usage
 
-To install dependencies, use:
+Before run, install all dependencies:
 ```bash
-% cabal install --lib ... --package-env .
+% cabal install --lib \
+    base \
+    bytestring \
+    cassava \
+    vector \
+    containers \
+    megaparsec \
+    directory \
+    temporary \
+    --package-env .
 ```
 
-Interactive mode (from root directory):
+Build and run code (from root directory):
 ```bash
 % ghc -i./src Main.hs -outputdir build -o sqlreader
+
+# Interactive mode (you'll need to specify query and output path later)
 % ./sqlreader ./data/imdb.csv
+
+# Auto mode
+% ./sqlreader ./data/imdb.csv "SELECT Series_Title FROM data WHERE Released_Year > 2015" ./output.csv
 ```
 
 To run tests, write in terminal (from root directory):

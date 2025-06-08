@@ -23,7 +23,7 @@ loadAndValidateQuery result query =
                 Left err -> putStrLn $ "Query parsing error:\n" ++ err
                 Right parsed -> case validateQuery columnNames parsed of
                     Left vErr -> putStrLn $ "Query validation failed:\n" ++ vErr
-                    Right ()  -> putStrLn "Query parsed and validated successfully."
+                    Right ()  -> putStrLn "\nQuery parsed and validated successfully."
 
 
 validateQuery :: [String] -> SQLQuery -> Either String ()
