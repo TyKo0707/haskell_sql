@@ -17,17 +17,18 @@ type Header = V.Vector B.ByteString
 type Rows = V.Vector Csv.NamedRecord
 
 processCSVQuery :: Maybe (Header, Rows) -> String -> FilePath -> IO ()
-processCSVQuery result query outputPath =
-    case result of
+processCSVQuery dataset query outputPath =
+    case dataset of
         Nothing -> putStrLn "Failed to load CSV file."
+        -- Just is a constructor for Maybe type
         Just (header, rows) -> case parseSQLQuery query of -- (3.1)
             Left err -> putStrLn $ "Query parsing failed:\n" ++ err
             Right parsed -> do
-                loadAndValidateQuery result query -- (3.2)
+                loadAndValidateQuery dataset query -- (3.2)
                 let colTypes = inferColumnTypes header rows
                 let resultRows = runQuery parsed rows colTypes -- (4)
-                let selectedHeader = V.fromList $ map B.pack (selectCols parsed)
-                writeCSV outputPath selectedHeader resultRows -- (5)
+                let filterHeader = V.fromList $ map B.pack (selectCols parsed)
+                writeCSV outputPath filterHeader resultRows -- (5)
 
 -- General steps here are: (1) process args and determine mode -> (2) load data from csv -> 
 -- (3) parse and validate query -> (4) execute query -> (5) write resulted output to the file

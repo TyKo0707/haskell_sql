@@ -10,6 +10,7 @@ import Data.Maybe (mapMaybe)
 
 type Row = Csv.NamedRecord
 
+-- loadCSV reads a csv file from the disk and decodes it with headers
 loadCSV :: FilePath -> IO (Either String (Csv.Header, V.Vector Row))
 loadCSV path = do
     content <- BL.readFile path
@@ -17,11 +18,12 @@ loadCSV path = do
         Left err -> return $ Left err
         Right (header, rows) -> return $ Right (header, rows)
 
+-- This one tries to figure out what type each column has (used also for query execution later)
 inferColumnTypes :: Csv.Header -> V.Vector Row -> [(String, String)]
 inferColumnTypes header rows =
-    let sampleRows = take 10 $ V.toList rows
+    let firstTenRows = take 10 $ V.toList rows
         columns = V.toList header
-    in map (\col -> (B.unpack col, guessType col sampleRows)) columns
+    in map (\col -> (B.unpack col, guessType col firstTenRows)) columns
 
 guessType :: B.ByteString -> [Row] -> String
 guessType col rows =
@@ -31,17 +33,20 @@ guessType col rows =
        else if all isFloat asText then "Float"
        else "String"
 
+-- checks if given string is int
 isInt :: String -> Bool
 isInt s = case reads s :: [(Int, String)] of [(n, "")] -> True; _ -> False
 
+-- checks if given string is float
 isFloat :: String -> Bool
-isFloat s = case reads s :: [(Double, String)] of [(n, "")] -> True; _ -> False
+isFloat s = case reads s :: [(Float, String)] of [(n, "")] -> True; _ -> False
 
 -- Download csv file from path and write columns along with types
 loadAndDescribeCSV :: FilePath -> IO (Maybe (Csv.Header, V.Vector Row))
 loadAndDescribeCSV csvPath = do
-    result <- loadCSV csvPath
-    case result of
+    -- load csv from a file and process result (either Left or Right)
+    dataset <- loadCSV csvPath
+    case dataset of
         Left err -> do
             putStrLn $ "Error loading CSV: " ++ err
             return Nothing

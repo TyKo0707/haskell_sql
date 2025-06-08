@@ -1,13 +1,14 @@
 module QueryParser (SQLQuery(..), parseSQLQuery) where
 
-import Text.Megaparsec
-import Text.Megaparsec.Char
-import qualified Text.Megaparsec.Char.Lexer as L
 import Control.Applicative (empty)
 import Data.Functor (void)
 import Data.Void
 import Data.Char (isAlphaNum)
 import SQLKeywords
+
+import Text.Megaparsec
+import Text.Megaparsec.Char
+import qualified Text.Megaparsec.Char.Lexer as L
 
 type Parser = Parsec Void String
 
@@ -35,19 +36,19 @@ identifier = lexeme ((:) <$> letterChar <*> many (alphaNumChar <|> char '_'))
 sqlQueryParser :: Parser SQLQuery
 sqlQueryParser = do
   _ <- lexeme (string' selectKW)
-  cols <- identifier `sepBy1` symbol ","
+  selectedCols <- identifier `sepBy1` symbol ","
   _ <- lexeme (string' fromKW)
-  src <- identifier
-  mWhere <- optional (try $ lexeme (string' whereKW) >> manyTill anySingle (lookAhead $ try (void (string' orderByKW) <|> void (string' limitKW) <|> eof)))
-  mOrder <- optional (try $ lexeme (string' orderByKW) >> identifier)
-  mLimit <- optional (try $ lexeme (string' limitKW) >> L.decimal)
+  tableName <- identifier
+  maybeWhere <- optional (try $ lexeme (string' whereKW) >> manyTill anySingle (lookAhead $ try (void (string' orderByKW) <|> void (string' limitKW) <|> eof)))
+  maybeOrder <- optional (try $ lexeme (string' orderByKW) >> identifier)
+  maybeLimit <- optional (try $ lexeme (string' limitKW) >> L.decimal)
   eof
-  return $ SQLQuery cols src (clean mWhere) mOrder mLimit
+  return $ SQLQuery selectedCols tableName (cleanup maybeWhere) maybeOrder maybeLimit
   where
-    clean = fmap (unwords . words)
+    cleanup = fmap (unwords . words)  -- just strip redundant spaces
 
 parseSQLQuery :: String -> Either String SQLQuery
 parseSQLQuery input =
   case parse sqlQueryParser "" input of
     Left err -> Left (errorBundlePretty err)
-    Right q  -> Right q
+    Right query -> Right query

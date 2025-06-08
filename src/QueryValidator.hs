@@ -8,11 +8,11 @@ import qualified Data.Csv as Csv
 type Header = V.Vector B.ByteString
 type Rows = V.Vector Csv.NamedRecord
 
--- Extract column names from header
+-- Extract columns names from header
 extractColumnNames :: Header -> [String]
 extractColumnNames = map B.unpack . V.toList
 
--- Validate query against loaded header and parsed query
+-- Validate query on loaded header and parsed query
 loadAndValidateQuery :: Maybe (Header, Rows) -> String -> IO ()
 loadAndValidateQuery result query =
     case result of

@@ -10,5 +10,5 @@ type Rows = [Csv.NamedRecord]
 
 writeCSV :: FilePath -> Header -> Rows -> IO ()
 writeCSV path header rows = do
-    let csvData = Csv.encodeByName header rows  -- `rows` is already a list
-    BL.writeFile path csvData
+    let dataset = Csv.encodeByName header rows  -- rows is already a list (from Main.hs)
+    BL.writeFile path dataset
